@@ -25,7 +25,7 @@ int main(int nArgs, char* args[]) {
 	if (image_front.empty()) {
 		cout << "Unable to open front image : " + image_path << "\n";
 		system("pause");
-		return 0;
+		return 0;			
 	}
 	dlib::full_object_detection odt;
 	std::vector<Point> points;

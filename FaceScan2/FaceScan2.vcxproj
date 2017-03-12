@@ -156,11 +156,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="faceScan.cpp" />
+    <ClCompile Include="ImageUtils.cpp" />
     <ClCompile Include="include\dlib\all\source.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="ShirtColor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="faceScan.h" />
+    <ClInclude Include="ImageUtils.h" />
+    <ClInclude Include="ShirtColor.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

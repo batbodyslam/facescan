@@ -104,7 +104,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;ENABLE_ASSERTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>include\;$(OPENCV_INC_DIR);C:\Users\Pete\Downloads\Programs\opencv\build\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>include\;$(OPENCV_INC_DIR)</AdditionalIncludeDirectories>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>

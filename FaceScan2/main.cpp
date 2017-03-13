@@ -18,10 +18,11 @@ string shape_landmark_dat_path = "assets/shape_predictor_68_face_landmarks.dat";
 string image_path = "assets/mild.png";
 
 faceScan _faceScan;
+ShirtColor _shirtColor;
 
 int main(int nArgs, char* args[]) {
-
-	/* Image*/
+	/*
+	// Image
 	Mat image_front = imread(image_path);
 	if (image_front.empty()) {
 		cout << "Unable to open front image : " + image_path << "\n";
@@ -37,6 +38,8 @@ int main(int nArgs, char* args[]) {
 	
 	imshow("front", image_front);
 
+	*/
+	_shirtColor.run();
 
 	waitKey(0);
 

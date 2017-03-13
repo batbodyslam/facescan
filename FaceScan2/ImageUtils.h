@@ -4,10 +4,10 @@
 #ifndef NV_IMAGE_UTILS_H
 #define NV_IMAGE_UTILS_H
 
-#if defined (__cplusplus)
-extern "C"
-{
-#endif
+//#if defined (__cplusplus)
+//extern "C"
+//{
+//#endif
 
 #include "opencv2/highgui.hpp"
 #include "opencv2/core.hpp"
@@ -28,7 +28,7 @@ extern "C"
 	//#include <cxcore.h>
 	//#include <highgui.h>
 
-
+using namespace std;
 
 	class ImageUtils
 	{
@@ -64,8 +64,8 @@ extern "C"
 
 	};
 
-#if defined (__cplusplus)
-	}
-#endif
+//#if defined (__cplusplus)
+//	}
+//#endif
 
 #endif	// NV_IMAGE_UTILS_H

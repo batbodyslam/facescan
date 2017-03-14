@@ -245,7 +245,7 @@ void ShirtColor::run()
 	cout << "Found " << rectFaces.size() << " faces in " << tallyFaceDetectTime / ((double)cvGetTickFrequency()*1000.) << "ms\n";
 
 	
-	/*
+	
 	// Process each detected face
 	cout << "Detecting shirt colors below the faces." << endl;
 	for (int r = 0; r<rectFaces.size(); r++) {
@@ -300,25 +300,36 @@ void ShirtColor::run()
 			// Convert the shirt region from RGB colors to HSV colors
 			//cout << "Converting shirt region to HSV" << endl;
 			Mat imageShirt = imageIn(rectShirt);
-			Mat imageShirtHSB = 
-			IplImage *imageShirt = _imageUtils.cropRectangle(imageIn, rectShirt);
-			IplImage *imageShirtHSV = cvCreateImage(cvGetSize(imageShirt), 8, 3);
-			cvCvtColor(imageShirt, imageShirtHSV, CV_BGR2HSV);	// (note that OpenCV stores RGB images in B,G,R order.
+			Mat imageShirtHSV(imageShirt,CV_8UC3);
+			//IplImage *imageShirt = _imageUtils.cropRectangle(imageIn, rectShirt);
+			//IplImage *imageShirtHSV = cvCreateImage(cvGetSize(imageShirt), 8, 3);
+			//cvCvtColor(imageShirt, imageShirtHSV, CV_BGR2HSV);	// (note that OpenCV stores RGB images in B,G,R order.
+			cvtColor(imageShirt, imageShirtHSV, CV_BGR2HSV);
+			/*
 			if (!imageShirtHSV) {
 				cerr << "ERROR: Couldn't convert Shirt image from BGR2HSV." << endl;
 				exit(1);
-			}
+			}*/
 
 			//cout << "Determining color type of the shirt" << endl;
-			int h = imageShirtHSV->height;				// Pixel height
-			int w = imageShirtHSV->width;				// Pixel width
-			int rowSize = imageShirtHSV->widthStep;		// Size of row in bytes, including extra padding
-			char *imOfs = imageShirtHSV->imageData;	// Pointer to the start of the image HSV pixels.
+			int h = imageShirtHSV.size().height;				// Pixel height
+			int w = imageShirtHSV.size().width;				// Pixel width
+			//int rowSize = imageShirtHSV->widthStep;		// Size of row in bytes, including extra padding
+			//char *imOfs = imageShirtHSV->imageData;	// Pointer to the start of the image HSV pixels.
 													// Create an empty tally of pixel counts for each color type
 			int tallyColors[NUM_COLOR_TYPES];
 			for (int i = 0; i<NUM_COLOR_TYPES; i++)
 				tallyColors[i] = 0;
 			// Scan the shirt image to find the tally of pixel colors
+
+			MatIterator_<Vec3b> it = imageShirtHSV.begin<Vec3b>(), it_end = imageShirtHSV.end<Vec3b>();
+			for(;it !=it_end;++it)
+			{
+				Vec3b& pixel = *it;
+				int ctype = getPixelColorType(pixel[0], pixel[1], pixel[2]);
+				tallyColors[ctype]++;
+			}
+			/*
 			for (int y = 0; y<h; y++) {
 				for (int x = 0; x<w; x++) {
 					// Get the HSV pixel components
@@ -331,7 +342,7 @@ void ShirtColor::run()
 					// Keep count of these colors.
 					tallyColors[ctype]++;
 				}
-			}
+			}*/
 
 			// Print a report about color types, and find the max tally
 			//cout << "Number of pixels found using each color type (out of " << (w*h) << ":\n";
@@ -351,25 +362,32 @@ void ShirtColor::run()
 			cout << "Color of shirt: " << sCTypes[tallyMaxIndex] << " (" << percentage << "% confidence)." << endl << endl;
 
 			// Display the color type over the shirt in the image.
+			//int font = FONT_HERSHEY_PLAIN;
 			CvFont font;
 			//cvInitFont(&font,CV_FONT_HERSHEY_PLAIN,0.55,0.7, 0,1,CV_AA);	// For OpenCV 1.1
-			cvInitFont(&font, CV_FONT_HERSHEY_PLAIN, 0.8, 1.0, 0, 1, CV_AA);	// For OpenCV 2.0
+			//cvInitFont(&font, CV_FONT_HERSHEY_PLAIN, 0.8, 1.0, 0, 1, CV_AA);	// For OpenCV 2.0
 			char text[256];
 			sprintf_s(text, sizeof(text) - 1, "%d%%", percentage);
-			cvPutText(imageDisplay, sCTypes[tallyMaxIndex], cvPoint(rectShirt.x, rectShirt.y + rectShirt.height + 12), &font, CV_RGB(255, 0, 0));
-			cvPutText(imageDisplay, text, cvPoint(rectShirt.x, rectShirt.y + rectShirt.height + 24), &font, CV_RGB(255, 0, 0));
+			putText(imageDisplay, sCTypes[tallyMaxIndex], Point(rectShirt.x, rectShirt.y + rectShirt.height + 12), FONT_HERSHEY_PLAIN,1,Scalar(0,0,255));
+			putText(imageDisplay, text, cvPoint(rectShirt.x, rectShirt.y + rectShirt.height + 24), FONT_HERSHEY_PLAIN, 1, Scalar(0, 0, 255));
+			//cvPutText(imageDisplay, sCTypes[tallyMaxIndex], cvPoint(rectShirt.x, rectShirt.y + rectShirt.height + 12), &font, CV_RGB(255, 0, 0));
+			//cvPutText(imageDisplay, text, cvPoint(rectShirt.x, rectShirt.y + rectShirt.height + 24), &font, CV_RGB(255, 0, 0));
 
 
 			// Free resources.
-			cvReleaseImage(&imageShirtHSV);
-			cvReleaseImage(&imageShirt);
+			//cvReleaseImage(&imageShirtHSV);
+			//cvReleaseImage(&imageShirt);
 		}//end if valid height
 	}//end for loop
 
 	 // Display the RGB debugging image
+	namedWindow("Shirt");
+	imshow("Shirt", imageDisplay);
+	/*
 	cvNamedWindow("Shirt", 1);
 	cvShowImage("Shirt", imageDisplay);
-
+	
+	
 	// Pause
 	cvWaitKey();
 
@@ -382,4 +400,5 @@ void ShirtColor::run()
 	cvReleaseImage(&imageIn);
 	//return 0;
 	*/
+	
 }

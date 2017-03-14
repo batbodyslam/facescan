@@ -256,9 +256,9 @@ void ShirtColor::run()
 		//_imageUtils.drawRectangle(imageDisplay, rectFace, CV_RGB(255, 0, 0));
 
 		// Create the shirt region, to be below the detected face and of similar size.
-		float SHIRT_DY = 1.4f;	// Distance from top of face to top of shirt region, based on detected face height.
-		float SHIRT_SCALE_X = 0.6f;	// Width of shirt region compared to the detected face
-		float SHIRT_SCALE_Y = 0.6f;	// Height of shirt region compared to the detected face
+		float SHIRT_DY = 1.6f;	// Distance from top of face to top of shirt region, based on detected face height.
+		float SHIRT_SCALE_X = 1.8f;	// Width of shirt region compared to the detected face
+		float SHIRT_SCALE_Y = 1.8f;	// Height of shirt region compared to the detected face
 		CvRect rectShirt;
 		rectShirt.x = rectFace.x + (int)(0.5f * (1.0f - SHIRT_SCALE_X) * (float)rectFace.width);
 		rectShirt.y = rectFace.y + (int)(SHIRT_DY * (float)rectFace.height) + (int)(0.5f * (1.0f - SHIRT_SCALE_Y) * (float)rectFace.height);
@@ -300,7 +300,7 @@ void ShirtColor::run()
 			// Convert the shirt region from RGB colors to HSV colors
 			//cout << "Converting shirt region to HSV" << endl;
 			Mat imageShirt = imageIn(rectShirt);
-			Mat imageShirtHSV(imageShirt,CV_8UC3);
+			Mat imageShirtHSV;
 			//IplImage *imageShirt = _imageUtils.cropRectangle(imageIn, rectShirt);
 			//IplImage *imageShirtHSV = cvCreateImage(cvGetSize(imageShirt), 8, 3);
 			//cvCvtColor(imageShirt, imageShirtHSV, CV_BGR2HSV);	// (note that OpenCV stores RGB images in B,G,R order.

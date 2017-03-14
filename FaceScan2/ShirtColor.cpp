@@ -143,7 +143,7 @@ void ShirtColor::run()
 	std::cout << "usage: ShirtDetection [image_file]" << endl;
 
 	//char *strFileImage = "n7.jpg";	// default file
-	char *strFileImage = "assets\\mild.png";	// default file
+	//char *strFileImage = "assets\\mild.png";	// default file
 /*
 	if (argc == 2)
 		strFileImage = argv[1];	// Get image from first argument.
@@ -153,7 +153,7 @@ void ShirtColor::run()
 	}
 	*/
 	// Load the HaarCascade classifier for face detection. Added by Shervin on 22/9/09
-	std::cout << "Loading Face HaarCascade in '" << cascadeFileFace << "'" << endl;
+	std::cout << "Loading Face HaarCascade in '" << cascade_path << "'" << endl;
 	//Load cascade
 	
 	CascadeClassifier cascadeFace;

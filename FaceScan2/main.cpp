@@ -39,7 +39,7 @@ int main(int nArgs, char* args[]) {
 	imshow("front", image_front);
 
 	*/
-
+	_shirtColor.run();
 	Mat frame;
 	//--- INITIALIZE VIDEOCAPTURE
 	VideoCapture cap;
@@ -70,11 +70,12 @@ int main(int nArgs, char* args[]) {
 		}
 		// show live and wait for a key with timeout long enough to show images
 		imshow("Live", frame);
+		
 		if (waitKey(5) >= 0)
 			break;
 	}
 
-	_shirtColor.run();
+	
 
 	waitKey(0);
 

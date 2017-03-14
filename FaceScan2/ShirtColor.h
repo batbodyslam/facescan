@@ -40,8 +40,8 @@ public:
 private:
 	ImageUtils _imageUtils;
 	// Face Detection HaarCascade Classifier file for OpenCV (downloadable from "http://alereimondo.no-ip.org/OpenCV/34").
-	const char* cascadeFileFace = "haarcascades\\haarcascade_frontalface_alt.xml";	// Path to the Face Detection HaarCascade XML file
+	//const char* cascadeFileFace = "haarcascades\\haarcascade_frontalface_alt.xml";	// Path to the Face Detection HaarCascade XML file
 	//const char* cascadeFileFace = "assets\\haarcascades\\haarcascade_frontalface_alt.xml";	// Path to the Face Detection HaarCascade XML file
 	string cascade_path = "assets/haarcascades/haarcascade_frontalface_alt.xml";
-	string image_path = "assets/mild.png";
+	string image_path = "assets/test1.png";
 };

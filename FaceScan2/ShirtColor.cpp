@@ -256,9 +256,9 @@ void ShirtColor::run()
 		//_imageUtils.drawRectangle(imageDisplay, rectFace, CV_RGB(255, 0, 0));
 
 		// Create the shirt region, to be below the detected face and of similar size.
-		float SHIRT_DY = 1.6f;	// Distance from top of face to top of shirt region, based on detected face height.
-		float SHIRT_SCALE_X = 1.8f;	// Width of shirt region compared to the detected face
-		float SHIRT_SCALE_Y = 1.8f;	// Height of shirt region compared to the detected face
+		float SHIRT_DY = 2.6f;	// Distance from top of face to top of shirt region, based on detected face height.
+		float SHIRT_SCALE_X = 2.0f;	// Width of shirt region compared to the detected face
+		float SHIRT_SCALE_Y = 3.0f;	// Height of shirt region compared to the detected face
 		CvRect rectShirt;
 		rectShirt.x = rectFace.x + (int)(0.5f * (1.0f - SHIRT_SCALE_X) * (float)rectFace.width);
 		rectShirt.y = rectFace.y + (int)(SHIRT_DY * (float)rectFace.height) + (int)(0.5f * (1.0f - SHIRT_SCALE_Y) * (float)rectFace.height);
@@ -311,7 +311,7 @@ void ShirtColor::run()
 				exit(1);
 			}*/
 
-			//cout << "Determining color type of the shirt" << endl;
+			//cout << "Determining color type of the Pant" << endl;
 			int h = imageShirtHSV.size().height;				// Pixel height
 			int w = imageShirtHSV.size().width;				// Pixel width
 			//int rowSize = imageShirtHSV->widthStep;		// Size of row in bytes, including extra padding
@@ -372,6 +372,143 @@ void ShirtColor::run()
 			putText(imageDisplay, text, cvPoint(rectShirt.x, rectShirt.y + rectShirt.height + 24), FONT_HERSHEY_PLAIN, 1, Scalar(0, 0, 255));
 			//cvPutText(imageDisplay, sCTypes[tallyMaxIndex], cvPoint(rectShirt.x, rectShirt.y + rectShirt.height + 12), &font, CV_RGB(255, 0, 0));
 			//cvPutText(imageDisplay, text, cvPoint(rectShirt.x, rectShirt.y + rectShirt.height + 24), &font, CV_RGB(255, 0, 0));
+
+
+
+
+			// Free resources.
+			//cvReleaseImage(&imageShirtHSV);
+			//cvReleaseImage(&imageShirt);
+		}//end if valid height
+	}//end for loop
+
+	cout << "Detecting pants colors below the faces." << endl;
+	for (int r = 0; r<rectFaces.size(); r++) {
+		float initialConfidence = 1.0f;
+		int bottom;
+		Rect rectFace = rectFaces[r];
+		rectangle(imageDisplay, rectFace, CV_RGB(255, 0, 0));
+		//_imageUtils.drawRectangle(imageDisplay, rectFace, CV_RGB(255, 0, 0));
+
+		// Create the shirt region, to be below the detected face and of similar size.
+		float PANTS_DY = 6.5f;	// Distance from top of face to top of shirt region, based on detected face height.
+		float PANTS_SCALE_X = 2.0f;	// Width of shirt region compared to the detected face
+		float PANTS_SCALE_Y = 3.0f;	// Height of shirt region compared to the detected face
+		CvRect rectPants;
+		rectPants.x = rectFace.x + (int)(0.5f * (1.0f - PANTS_SCALE_X) * (float)rectFace.width);
+		rectPants.y = rectFace.y + (int)(PANTS_DY * (float)rectFace.height) + (int)(0.5f * (1.0f - PANTS_SCALE_Y) * (float)rectFace.height);
+		rectPants.width = (int)(PANTS_SCALE_X * rectFace.width);
+		rectPants.height = (int)(PANTS_SCALE_Y * rectFace.height);
+		cout << "Pant region is from " << rectPants.x << ", " << rectPants.y << " to " << rectPants.x + rectPants.width - 1 << ", " << rectPants.y + rectPants.height - 1 << endl;
+
+		// If the shirt region goes partly below the image, try just a little below the face
+		bottom = rectPants.y + rectPants.height - 1;
+		if (bottom > imageIn.size().height - 1) {
+			PANTS_DY = 0.95f;	// Distance from top of face to top of shirt region, based on detected face height.
+			PANTS_SCALE_Y = 0.3f;	// Height of shirt region compared to the detected face
+									// Use a higher shirt region
+			rectPants.y = rectFace.y + (int)(PANTS_DY * (float)rectFace.height) + (int)(0.5f * (1.0f - PANTS_SCALE_Y) * (float)rectFace.height);
+			rectPants.height = (int)(PANTS_SCALE_Y * rectFace.height);
+			initialConfidence = initialConfidence * 0.5f;	// Since we are using a smaller region, we are less confident about the results now.
+			cout << "Warning: Pant region goes past the end of the image. Trying to reduce the pant region position to " << rectPants.y << " with a height of " << rectPants.height << endl;
+		}
+
+		// Try once again if it is partly below the image.
+		bottom = rectPants.y + rectPants.height - 1;
+		if (bottom > imageIn.size().height - 1) {
+			bottom = imageIn.size().height - 1;	// Limit the bottom
+			rectPants.height = bottom - (rectPants.y - 1);	// Adjust the height to use the new bottom
+			initialConfidence = initialConfidence * 0.7f;	// Since we are using a smaller region, we are less confident about the results now.
+			cout << "Warning: Pant region still goes past the end of the image. Trying to reduce the shirt region height to " << rectPants.height << endl;
+		}
+
+		// Make sure the shirt region is in the image
+		if (rectPants.height <= 1) {
+			cout << "Warning: Pant region is not in the image at all, so skipping this face." << endl;
+		}
+		else {
+
+			// Show the shirt region
+			rectangle(imageDisplay, rectPants, CV_RGB(255, 255, 255));
+			//_imageUtils.drawRectangle(imageDisplay, rectShirt, CV_RGB(255, 255, 255));
+
+			// Convert the shirt region from RGB colors to HSV colors
+			//cout << "Converting shirt region to HSV" << endl;
+			Mat imagePant = imageIn(rectPants);
+			Mat imagePantHSV;
+			//IplImage *imageShirt = _imageUtils.cropRectangle(imageIn, rectShirt);
+			//IplImage *imageShirtHSV = cvCreateImage(cvGetSize(imageShirt), 8, 3);
+			//cvCvtColor(imageShirt, imageShirtHSV, CV_BGR2HSV);	// (note that OpenCV stores RGB images in B,G,R order.
+			cvtColor(imagePant, imagePantHSV, CV_BGR2HSV);
+			/*
+			if (!imageShirtHSV) {
+			cerr << "ERROR: Couldn't convert Shirt image from BGR2HSV." << endl;
+			exit(1);
+			}*/
+
+			//cout << "Determining color type of the shirt" << endl;
+			int h = imagePantHSV.size().height;				// Pixel height
+			int w = imagePantHSV.size().width;				// Pixel width
+															//int rowSize = imageShirtHSV->widthStep;		// Size of row in bytes, including extra padding
+															//char *imOfs = imageShirtHSV->imageData;	// Pointer to the start of the image HSV pixels.
+															// Create an empty tally of pixel counts for each color type
+			int tallyColors[NUM_COLOR_TYPES];
+			for (int i = 0; i<NUM_COLOR_TYPES; i++)
+				tallyColors[i] = 0;
+			// Scan the shirt image to find the tally of pixel colors
+
+			MatIterator_<Vec3b> it = imagePantHSV.begin<Vec3b>(), it_end = imagePantHSV.end<Vec3b>();
+			for (; it != it_end; ++it)
+			{
+				Vec3b& pixel = *it;
+				int ctype = getPixelColorType(pixel[0], pixel[1], pixel[2]);
+				tallyColors[ctype]++;
+			}
+			/*
+			for (int y = 0; y<h; y++) {
+			for (int x = 0; x<w; x++) {
+			// Get the HSV pixel components
+			uchar H = *(uchar*)(imOfs + y*rowSize + x * 3 + 0);	// Hue
+			uchar S = *(uchar*)(imOfs + y*rowSize + x * 3 + 1);	// Saturation
+			uchar V = *(uchar*)(imOfs + y*rowSize + x * 3 + 2);	// Value (Brightness)
+
+			// Determine what type of color the HSV pixel is.
+			int ctype = getPixelColorType(H, S, V);
+			// Keep count of these colors.
+			tallyColors[ctype]++;
+			}
+			}*/
+
+			// Print a report about color types, and find the max tally
+			//cout << "Number of pixels found using each color type (out of " << (w*h) << ":\n";
+			int tallyMaxIndex = 0;
+			int tallyMaxCount = -1;
+			int pixels = w * h;
+			for (int i = 0; i<NUM_COLOR_TYPES; i++) {
+				int v = tallyColors[i];
+				cout << sCTypes[i] << " " << (v * 100 / pixels) << "%, ";
+				if (v > tallyMaxCount) {
+					tallyMaxCount = tallyColors[i];
+					tallyMaxIndex = i;
+				}
+			}
+			cout << endl;
+			int percentage = initialConfidence * (tallyMaxCount * 100 / pixels);
+			cout << "Color of pant: " << sCTypes[tallyMaxIndex] << " (" << percentage << "% confidence)." << endl << endl;
+
+			// Display the color type over the shirt in the image.
+			//int font = FONT_HERSHEY_PLAIN;
+			CvFont font;
+			//cvInitFont(&font,CV_FONT_HERSHEY_PLAIN,0.55,0.7, 0,1,CV_AA);	// For OpenCV 1.1
+			//cvInitFont(&font, CV_FONT_HERSHEY_PLAIN, 0.8, 1.0, 0, 1, CV_AA);	// For OpenCV 2.0
+			char text[256];
+			sprintf_s(text, sizeof(text) - 1, "%d%%", percentage);
+			putText(imageDisplay, sCTypes[tallyMaxIndex], Point(rectPants.x, rectPants.y + rectPants.height + 12), FONT_HERSHEY_PLAIN, 1, Scalar(0, 0, 255));
+			putText(imageDisplay, text, cvPoint(rectPants.x, rectPants.y + rectPants.height + 24), FONT_HERSHEY_PLAIN, 1, Scalar(0, 0, 255));
+			//cvPutText(imageDisplay, sCTypes[tallyMaxIndex], cvPoint(rectShirt.x, rectShirt.y + rectShirt.height + 12), &font, CV_RGB(255, 0, 0));
+			//cvPutText(imageDisplay, text, cvPoint(rectShirt.x, rectShirt.y + rectShirt.height + 24), &font, CV_RGB(255, 0, 0));
+
+
 
 
 			// Free resources.

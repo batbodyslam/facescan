@@ -136,6 +136,19 @@ int ShirtColor::getPixelColorType(int H, int S, int V)
 }
 
 // C/C++ entry point
+
+void ShirtColor::readParams() {
+	FileStorage fs;
+	fs.open(params_path, FileStorage::READ);
+	if (!fs.isOpened()) {
+		cout << "Error input xml" << endl;
+		exit(1);
+	}
+	fs["SHIRT_DY"] >> SHIRT_DY;
+	fs["SHIRT_SCALE_X"] >> SHIRT_SCALE_X;
+	fs["SHIRT_SCALE_Y"] >> SHIRT_SCALE_Y;
+}
+
 void ShirtColor::run()
 //int main(int argc, char **argv)
 {
@@ -256,9 +269,9 @@ void ShirtColor::run()
 		//_imageUtils.drawRectangle(imageDisplay, rectFace, CV_RGB(255, 0, 0));
 
 		// Create the shirt region, to be below the detected face and of similar size.
-		float SHIRT_DY = 2.6f;	// Distance from top of face to top of shirt region, based on detected face height.
-		float SHIRT_SCALE_X = 2.0f;	// Width of shirt region compared to the detected face
-		float SHIRT_SCALE_Y = 3.0f;	// Height of shirt region compared to the detected face
+		//float SHIRT_DY = 2.6f;	// Distance from top of face to top of shirt region, based on detected face height.
+		//float SHIRT_SCALE_X = 2.0f;	// Width of shirt region compared to the detected face
+		//float SHIRT_SCALE_Y = 3.0f;	// Height of shirt region compared to the detected face
 		CvRect rectShirt;
 		rectShirt.x = rectFace.x + (int)(0.5f * (1.0f - SHIRT_SCALE_X) * (float)rectFace.width);
 		rectShirt.y = rectFace.y + (int)(SHIRT_DY * (float)rectFace.height) + (int)(0.5f * (1.0f - SHIRT_SCALE_Y) * (float)rectFace.height);
@@ -383,6 +396,7 @@ void ShirtColor::run()
 	}//end for loop
 
 	cout << "Detecting pants colors below the faces." << endl;
+	/*
 	for (int r = 0; r<rectFaces.size(); r++) {
 		float initialConfidence = 1.0f;
 		int bottom;
@@ -444,7 +458,7 @@ void ShirtColor::run()
 			if (!imageShirtHSV) {
 			cerr << "ERROR: Couldn't convert Shirt image from BGR2HSV." << endl;
 			exit(1);
-			}*/
+			}
 
 			//cout << "Determining color type of the shirt" << endl;
 			int h = imagePantHSV.size().height;				// Pixel height
@@ -477,7 +491,7 @@ void ShirtColor::run()
 			// Keep count of these colors.
 			tallyColors[ctype]++;
 			}
-			}*/
+			}
 
 			// Print a report about color types, and find the max tally
 			//cout << "Number of pixels found using each color type (out of " << (w*h) << ":\n";
@@ -516,7 +530,7 @@ void ShirtColor::run()
 			//cvReleaseImage(&imageShirt);
 		}//end if valid height
 	}//end for loop
-
+	*/
 	 // Display the RGB debugging image
 	namedWindow("Shirt");
 	imshow("Shirt", imageDisplay);

@@ -36,6 +36,7 @@ public:
 	std::vector<Rect> findObjectsInImage(Mat origImg, CascadeClassifier cascade, Size minFeatureSize = Size(20, 20));
 	int getPixelColorType(int H, int S, int V);
 	void run();
+	void readParams();
 
 private:
 	ImageUtils _imageUtils;
@@ -44,4 +45,9 @@ private:
 	//const char* cascadeFileFace = "assets\\haarcascades\\haarcascade_frontalface_alt.xml";	// Path to the Face Detection HaarCascade XML file
 	string cascade_path = "assets/haarcascades/haarcascade_frontalface_alt.xml";
 	string image_path = "assets/test1.png";
+	string params_path = "assets/params.xml";
+	float SHIRT_DY ;	// Distance from top of face to top of shirt region, based on detected face height.
+	float SHIRT_SCALE_X;	// Width of shirt region compared to the detected face
+	float SHIRT_SCALE_Y;	// Height of shirt region compared to the detected face
+
 };
